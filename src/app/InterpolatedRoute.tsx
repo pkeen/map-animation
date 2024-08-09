@@ -79,35 +79,37 @@ const InterpolatedRoute: React.FC<InterpolatedRouteProps> = ({
 		speed,
 	]);
 
-	return (
-		interpolatedRoute.length > 0 && (
-			<Source
-				id="interpolated-route"
-				type="geojson"
-				data={{
-					type: "FeatureCollection",
-					features: interpolatedRoute.map((coordinates) => ({
-						type: "Feature",
-						geometry: {
-							type: "Point",
-							coordinates,
-						},
-					})),
-				}}
-			>
-				<Layer
-					id="interpolated-route-dots"
-					type="circle"
-					paint={{
-						"circle-radius": 3, // Adjust the size of the dots
-						"circle-color": "#ff0000", // Set the color of the dots
-						// "circle-stroke-width": 1,
-						// "circle-stroke-color": "#ffffff", // Optional: add a border to the dots
-					}}
-				/>
-			</Source>
-		)
-	);
+	// return (
+	// 	interpolatedRoute.length > 0 && (
+	// 		<Source
+	// 			id="interpolated-route"
+	// 			type="geojson"
+	// 			data={{
+	// 				type: "FeatureCollection",
+	// 				features: interpolatedRoute.map((coordinates) => ({
+	// 					type: "Feature",
+	// 					geometry: {
+	// 						type: "Point",
+	// 						coordinates,
+	// 					},
+	// 				})),
+	// 			}}
+	// 		>
+	// 			<Layer
+	// 				id="interpolated-route-dots"
+	// 				type="circle"
+	// 				paint={{
+	// 					"circle-radius": 3, // Adjust the size of the dots
+	// 					"circle-color": "#ff0000", // Set the color of the dots
+	// 					// "circle-stroke-width": 1,
+	// 					// "circle-stroke-color": "#ffffff", // Optional: add a border to the dots
+	// 				}}
+	// 			/>
+	// 		</Source>
+	// 	)
+	// );
+
+	return null;
 };
 
 export default InterpolatedRoute;

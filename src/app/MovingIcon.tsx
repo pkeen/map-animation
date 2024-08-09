@@ -12,29 +12,6 @@ const MovingIcon: React.FC<MovingIconProps> = ({
 	bearings,
 	counterRef,
 }) => {
-	// const [iconCoordinates, setIconCoordinates] = useState(start);
-	// const counterRef = useRef(0);
-
-	// useEffect(() => {
-	// 	if (iconIsMoving && interpolatedRoute.length > 0) {
-	// 		const move = () => {
-	// 			if (counterRef.current < interpolatedRoute.length - 1) {
-	// 				setIconCoordinates(interpolatedRoute[counterRef.current]);
-	// 				counterRef.current += 1;
-	// 				setTimeout(move, intervalTime);
-	// 			} else {
-	// 				setIconIsMoving(false); // Stop the movement
-	// 			}
-	// 		};
-
-	// 		move(); // Start the animation loop
-
-	// 		return () => {
-	// 			counterRef.current = 0; // Reset the counter when the component unmounts or dependencies change
-	// 		};
-	// 	}
-	// }, [iconIsMoving, interpolatedRoute, intervalTime, setIconIsMoving]);
-
 	return (
 		<Marker longitude={iconCoordinates[0]} latitude={iconCoordinates[1]}>
 			<img

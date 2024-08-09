@@ -26,7 +26,7 @@ const CompletedRoute: React.FC<CompletedRouteProps> = ({ completedRoute }) => {
 					"line-cap": "round",
 				}}
 				paint={{
-					"line-color": "#00FF00", // Color for completed route (e.g., green)
+					"line-color": "#00a6ff", // Color for completed route (e.g., green)
 					"line-width": 5,
 				}}
 			/>

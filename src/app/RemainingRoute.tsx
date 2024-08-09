@@ -25,7 +25,7 @@ const RemainingRoute: React.FC<RemainingRouteProps> = ({ remainingRoute }) => {
 					"line-cap": "round",
 				}}
 				paint={{
-					"line-color": "#FFFF00", // Color for remaining route (e.g., red)
+					"line-color": "rgba(0, 187, 255, 0.5)", // Green with 50% transparency
 					"line-width": 5,
 				}}
 			/>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Source, Layer } from "react-map-gl";
+import { Source, Layer, useMap } from "react-map-gl";
 
 interface RouteProps {
 	route: number[][];
@@ -30,35 +30,37 @@ const Route: React.FC<RouteProps> = ({ route, setRoute, start, end }) => {
 		getRoute();
 	}, [start, end, setRoute]); // Removed `route` from dependencies to prevent infinite loop
 
-	return (
-		route.length > 0 && (
-			<Source
-				id="route"
-				type="geojson"
-				data={{
-					type: "Feature",
-					properties: {},
-					geometry: {
-						type: "LineString",
-						coordinates: route,
-					},
-				}}
-			>
-				<Layer
-					id="route"
-					type="line"
-					layout={{
-						"line-join": "round",
-						"line-cap": "round",
-					}}
-					paint={{
-						"line-color": "#888",
-						"line-width": 5,
-					}}
-				/>
-			</Source>
-		)
-	);
+	// return (
+	// 	route.length > 0 && (
+	// 		<Source
+	// 			id="route"
+	// 			type="geojson"
+	// 			data={{
+	// 				type: "Feature",
+	// 				properties: {},
+	// 				geometry: {
+	// 					type: "LineString",
+	// 					coordinates: route,
+	// 				},
+	// 			}}
+	// 		>
+	// 			<Layer
+	// 				id="route"
+	// 				type="line"
+	// 				layout={{
+	// 					"line-join": "round",
+	// 					"line-cap": "round",
+	// 				}}
+	// 				paint={{
+	// 					"line-color": "#8f6048",
+	// 					"line-width": 5,
+	// 				}}
+	// 			/>
+	// 		</Source>
+	// 	)
+	// );
+
+	return null;
 };
 
 export default Route;

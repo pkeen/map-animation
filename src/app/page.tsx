@@ -1,19 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useMap } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Route from "./Route";
 import MapComponent from "./MapComponent";
 import InterpolatedRoute from "./InterpolatedRoute";
 import TravelAnimation from "./TravelAnimation";
 import MovingIcon from "./MovingIcon";
+import MapLoadingHandler from "./MapLoadingHandler";
 // import Van from "./Van";
 
 const App: React.FC = () => {
 	const [viewState, setViewState] = useState({
-		latitude: 49.068343,
-		longitude: -122.32579,
-		zoom: 8,
+		latitude: 35.11,
+		longitude: -97.57,
+		zoom: 3.5,
+		//35.110,-97.570
 	});
+
 	const [route, setRoute] = useState<any[]>([]);
 	const start = [-122.32579, 49.068343];
 	const end = [-121.221103, 48.692216];
@@ -24,37 +28,73 @@ const App: React.FC = () => {
 	const [iconIsMoving, setIconIsMoving] = useState(false);
 	const [speed, setSpeed] = useState(20); // Speed in miles per second
 	const [intervalTime, setIntervalTime] = useState<number>(0); // Interval time
+	const [mapStyle, setMapStyle] = useState<string>(
+		// "mapbox://styles/kingstonkeen/clzkjpe0q000301r5c5dhh10g"
+		// "mapbox://styles/mapbox/streets-v11"  // Default Mapbox Streets style
+		"mapbox://styles/kingstonkeen/clznaomph005r01r58luu8dkm" // sat streets USA
+        // "mapbox://styles/kingstonkeen/clzkqqstn001701pz06axg70z" // USA Road Trip
+        // "mapbox://styles/kingstonkeen/clzkqltj9001101r84zblg24x" // USA Road Trip w States
+	);
+	// const mapRef = useMap().current;
+	const [mapLoaded, setMapLoaded] = useState(false);
 
 	const replayHandler = () => {
 		setIconIsMoving(true);
 	};
 
+	// useEffect(() => {
+	// 	if (mapRef) {
+	// 		console.log("Map reference exists, checking if style is loaded...");
+	// 		if (mapRef.isStyleLoaded()) {
+	// 			console.log("Map style is already loaded.");
+	// 			setMapLoaded(true);
+	// 		} else {
+	// 			console.log("Waiting for map style to load...");
+	// 			mapRef.on("load", () => {
+	// 				console.log("Map style loaded.");
+	// 				setMapLoaded(true);
+	// 			});
+	// 		}
+	// 	} else {
+	// 		console.log("Map reference does not exist.");
+	// 	}
+	// }, [mapRef]);
+
+	// console.log(mapLoaded);
+
 	return (
 		<>
-			<MapComponent viewState={viewState} setViewState={setViewState}>
-				<Route
-					route={route}
-					setRoute={setRoute}
-					start={start}
-					end={end}
-				/>
-				<InterpolatedRoute
-					route={route}
-					interpolatedRoute={interpolatedRoute}
-					setInterpolatedRoute={setInterpolatedRoute}
-					setBearings={setBearings}
-					resolutionMiles={resolutionMiles}
-					setIntervalTime={setIntervalTime}
-					speed={speed}
-				/>
-				<TravelAnimation
-					start={start}
-					interpolatedRoute={interpolatedRoute}
-					bearings={bearings}
-					iconIsMoving={iconIsMoving}
-					setIconIsMoving={setIconIsMoving}
-					intervalTime={intervalTime}
-				/>
+			<MapComponent
+				mapStyle={mapStyle}
+				viewState={viewState}
+				setViewState={setViewState}
+			>
+				<MapLoadingHandler>
+					<Route
+						route={route}
+						setRoute={setRoute}
+						start={start}
+						end={end}
+					/>
+
+					<InterpolatedRoute
+						route={route}
+						interpolatedRoute={interpolatedRoute}
+						setInterpolatedRoute={setInterpolatedRoute}
+						setBearings={setBearings}
+						resolutionMiles={resolutionMiles}
+						setIntervalTime={setIntervalTime}
+						speed={speed}
+					/>
+					<TravelAnimation
+						start={start}
+						interpolatedRoute={interpolatedRoute}
+						bearings={bearings}
+						iconIsMoving={iconIsMoving}
+						setIconIsMoving={setIconIsMoving}
+						intervalTime={intervalTime}
+					/>
+				</MapLoadingHandler>
 				{/* <Van
 					interpolatedRoute={interpolatedRoute}
 					bearings={bearings}
