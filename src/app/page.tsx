@@ -1,113 +1,143 @@
-import Image from "next/image";
+"use client";
+import React, { useEffect, useState } from "react";
+import "mapbox-gl/dist/mapbox-gl.css";
+import Route from "./Route";
+import MapComponent from "./MapComponent";
+import InterpolatedRoute from "./InterpolatedRoute";
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+const App: React.FC = () => {
+	const [viewState, setViewState] = useState({
+		latitude: 49.068343,
+		longitude: -122.32579,
+		zoom: 8,
+	});
+	const [route, setRoute] = useState<any[]>([]);
+	const start = [-122.32579, 49.068343];
+	const end = [-121.221103, 48.692216];
+	const [interpolatedRoute, setInterpolatedRoute] = useState<any[]>([]);
+	const [bearings, setBearings] = useState<number[]>([]);
+	const [steps, setSteps] = useState(500); // Lifted state for steps
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	return (
+		<>
+			<MapComponent viewState={viewState} setViewState={setViewState}>
+				<Route
+					route={route}
+					setRoute={setRoute}
+					start={start}
+					end={end}
+				/>
+				<InterpolatedRoute
+					route={route}
+					interpolatedRoute={interpolatedRoute}
+					setInterpolatedRoute={setInterpolatedRoute}
+					setBearings={setBearings}
+					steps={steps}
+				/>
+			</MapComponent>
+			<div>
+				<p className="text-gray-200">Zoom={viewState.zoom}</p>
+			</div>
+		</>
+	);
+};
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+export default App;
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+// const InterpolatedRoute = ({ route }: { route: any[] }) => {
+// 	const [interpolatedRoute, setInterpolatedRoute] = useState<any[]>([]);
+// 	const [bearings, setBearings] = useState<number[]>([]);
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+// 	useEffect(() => {
+// 		if (route.length > 0) {
+// 			const steps = 500;
+// 			const routeLineString = {
+// 				type: "Feature",
+// 				geometry: {
+// 					type: "LineString",
+// 					coordinates: route,
+// 				},
+// 			};
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
-}
+// 			const lineDistance = turf.length(routeLineString);
+// 			const increment = lineDistance / steps;
+// 			const interpolatedRoute: any[] = [];
+// 			const bearings: number[] = [];
+
+// 			for (let i = 0; i <= steps; i++) {
+// 				const segment = turf.along(routeLineString, increment * i);
+// 				interpolatedRoute.push(segment.geometry.coordinates);
+
+// 				if (i > 0) {
+// 					const bearing = turf.bearing(
+// 						turf.point(interpolatedRoute[i - 1]),
+// 						turf.point(interpolatedRoute[i])
+// 					);
+// 					bearings.push(bearing);
+// 				} else {
+// 					bearings.push(0);
+// 				}
+// 			}
+
+// 			setInterpolatedRoute(interpolatedRoute);
+// 			setBearings(bearings);
+// 		}
+// 	}, [route]);
+
+// 	return (
+// 		interpolatedRoute.length > 0 && (
+// 			<Source
+// 				id="interpolated-route"
+// 				type="geojson"
+// 				data={{
+// 					type: "Feature",
+// 					properties: {},
+// 					geometry: {
+// 						type: "LineString",
+// 						coordinates: interpolatedRoute,
+// 					},
+// 				}}
+// 			>
+// 				<Layer
+// 					id="interpolated-route-layer"
+// 					type="line"
+// 					layout={{
+// 						"line-join": "round",
+// 						"line-cap": "round",
+// 					}}
+// 					paint={{
+// 						"line-color": "#ff0000",
+// 						"line-width": 4,
+// 					}}
+// 				/>
+// 			</Source>
+// 		)
+// 	);
+// };
+
+// const MapComponent: React.FC = () => {
+// 	const [viewState, setViewState] = useState({
+// 		latitude: 37.8,
+// 		longitude: -122.4,
+// 		zoom: 4,
+// 	});
+
+// 	return (
+// 		<>
+// 			<Map
+// 				{...viewState}
+// 				onMove={(evt) => setViewState(evt.viewState)}
+// 				mapboxAccessToken={accessToken}
+// 				style={{ width: "100%", height: "90vh" }}
+// 				mapStyle="mapbox://styles/mapbox/streets-v9"
+// 			>
+// 				<Marker longitude={-122.4} latitude={37.8} color="red" />
+// 				{/* <Route setRoute={setRoute} /> */}
+// 				{/* <InterpolatedRoute route={route} /> */}
+// 			</Map>
+// 			<div>
+// 				<p className="text-gray-200">Zoom={viewState.zoom}</p>
+// 			</div>
+// 		</>
+// 	);
+// };
