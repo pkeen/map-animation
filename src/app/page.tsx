@@ -4,6 +4,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Route from "./Route";
 import MapComponent from "./MapComponent";
 import InterpolatedRoute from "./InterpolatedRoute";
+import MovingIcon from "./MovingIcon";
+// import Van from "./Van";
 
 const App: React.FC = () => {
 	const [viewState, setViewState] = useState({
@@ -17,6 +19,11 @@ const App: React.FC = () => {
 	const [interpolatedRoute, setInterpolatedRoute] = useState<any[]>([]);
 	const [bearings, setBearings] = useState<number[]>([]);
 	const [steps, setSteps] = useState(500); // Lifted state for steps
+	const [iconIsMoving, setIconIsMoving] = useState(false);
+
+	const replayHandler = () => {
+		setIconIsMoving(true);
+	};
 
 	return (
 		<>
@@ -34,9 +41,26 @@ const App: React.FC = () => {
 					setBearings={setBearings}
 					steps={steps}
 				/>
+				<MovingIcon
+					start={start}
+					interpolatedRoute={interpolatedRoute}
+					bearings={bearings}
+					iconIsMoving={iconIsMoving}
+					setIconIsMoving={setIconIsMoving}
+				/>
+				{/* <Van
+					interpolatedRoute={interpolatedRoute}
+					bearings={bearings}
+				/> */}
 			</MapComponent>
 			<div>
 				<p className="text-gray-200">Zoom={viewState.zoom}</p>
+				<button
+					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					onClick={() => setIconIsMoving(!iconIsMoving)}
+				>
+					Replay
+				</button>
 			</div>
 		</>
 	);

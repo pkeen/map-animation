@@ -25,6 +25,7 @@ const InterpolatedRoute: React.FC<InterpolatedRouteProps> = ({
 					type: "LineString",
 					coordinates: route,
 				},
+				properties: {}, // Add this line
 			};
 
 			const lineDistance = turf.length(routeLineString);

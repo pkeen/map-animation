@@ -1,14 +1,9 @@
 import React, { useEffect } from "react";
 import { Source, Layer } from "react-map-gl";
 
-const accessToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
-if (!accessToken) {
-	throw new Error("MAPBOX_API_KEY is not defined");
-}
-
 interface RouteProps {
-	route: any[];
-	setRoute: (route: any[]) => void;
+	route: number[][];
+	setRoute: (route: number[][]) => void;
 	start: number[];
 	end: number[];
 }
@@ -18,17 +13,22 @@ const Route: React.FC<RouteProps> = ({ route, setRoute, start, end }) => {
 		const getRoute = async () => {
 			try {
 				const query = await fetch(
-					`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${accessToken}`,
-					{ method: "GET" }
+					`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}`
 				);
 				const json = await query.json();
-				setRoute(json.routes[0].geometry.coordinates);
+				const newRoute = json.routes[0].geometry.coordinates;
+
+				// Only update state if the new route is different to prevent endless re-renders
+				if (JSON.stringify(newRoute) !== JSON.stringify(route)) {
+					setRoute(newRoute);
+				}
 			} catch (error) {
 				console.error("Failed to fetch route:", error);
 			}
 		};
+
 		getRoute();
-	}, [start, end, setRoute]);
+	}, [start, end, setRoute]); // Removed `route` from dependencies to prevent infinite loop
 
 	return (
 		route.length > 0 && (
