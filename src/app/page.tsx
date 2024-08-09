@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Route from "./Route";
 import MapComponent from "./MapComponent";
 import InterpolatedRoute from "./InterpolatedRoute";
+import TravelAnimation from "./TravelAnimation";
 import MovingIcon from "./MovingIcon";
 // import Van from "./Van";
 
@@ -19,7 +20,10 @@ const App: React.FC = () => {
 	const [interpolatedRoute, setInterpolatedRoute] = useState<any[]>([]);
 	const [bearings, setBearings] = useState<number[]>([]);
 	const [steps, setSteps] = useState(500); // Lifted state for steps
+	const [resolutionMiles, setResolutionMiles] = useState(0.5); // Lifted state for resolution in miles
 	const [iconIsMoving, setIconIsMoving] = useState(false);
+	const [speed, setSpeed] = useState(20); // Speed in miles per second
+	const [intervalTime, setIntervalTime] = useState<number>(0); // Interval time
 
 	const replayHandler = () => {
 		setIconIsMoving(true);
@@ -39,14 +43,17 @@ const App: React.FC = () => {
 					interpolatedRoute={interpolatedRoute}
 					setInterpolatedRoute={setInterpolatedRoute}
 					setBearings={setBearings}
-					steps={steps}
+					resolutionMiles={resolutionMiles}
+					setIntervalTime={setIntervalTime}
+					speed={speed}
 				/>
-				<MovingIcon
+				<TravelAnimation
 					start={start}
 					interpolatedRoute={interpolatedRoute}
 					bearings={bearings}
 					iconIsMoving={iconIsMoving}
 					setIconIsMoving={setIconIsMoving}
+					intervalTime={intervalTime}
 				/>
 				{/* <Van
 					interpolatedRoute={interpolatedRoute}
@@ -61,6 +68,15 @@ const App: React.FC = () => {
 				>
 					Replay
 				</button>
+				<input
+					type="range"
+					min="1"
+					max="100"
+					step="5"
+					value={speed}
+					onChange={(e) => setSpeed(parseFloat(e.target.value))}
+				/>
+				<p>{speed}</p>
 			</div>
 		</>
 	);

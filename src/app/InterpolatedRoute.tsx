@@ -7,7 +7,9 @@ interface InterpolatedRouteProps {
 	interpolatedRoute: number[][];
 	setInterpolatedRoute: (interpolatedRoute: number[][]) => void;
 	setBearings: (bearings: number[]) => void;
-	steps: number; // Add steps as a prop
+	resolutionMiles: number;
+	setIntervalTime: (intervalTime: number) => void;
+	speed: number;
 }
 
 const InterpolatedRoute: React.FC<InterpolatedRouteProps> = ({
@@ -15,7 +17,9 @@ const InterpolatedRoute: React.FC<InterpolatedRouteProps> = ({
 	interpolatedRoute,
 	setInterpolatedRoute,
 	setBearings,
-	steps,
+	resolutionMiles,
+	setIntervalTime,
+	speed,
 }) => {
 	useEffect(() => {
 		if (route.length > 0) {
@@ -28,13 +32,22 @@ const InterpolatedRoute: React.FC<InterpolatedRouteProps> = ({
 				properties: {}, // Add this line
 			};
 
-			const lineDistance = turf.length(routeLineString);
-			const increment = lineDistance / steps;
+			const lineDistance = turf.length(routeLineString, {
+				units: "miles",
+			});
+			const steps = Math.ceil(lineDistance / resolutionMiles); // Calculate the number of steps
+
 			const newInterpolatedRoute: number[][] = [];
 			const newBearings: number[] = [];
 
 			for (let i = 0; i <= steps; i++) {
-				const segment = turf.along(routeLineString, increment * i);
+				const segment = turf.along(
+					routeLineString,
+					resolutionMiles * i,
+					{
+						units: "miles",
+					}
+				);
 				newInterpolatedRoute.push(
 					segment.geometry.coordinates as number[]
 				);
@@ -52,8 +65,19 @@ const InterpolatedRoute: React.FC<InterpolatedRouteProps> = ({
 
 			setInterpolatedRoute(newInterpolatedRoute);
 			setBearings(newBearings);
+
+			// Calculate interval time based on speed and resolution
+			const intervalTime = (resolutionMiles / speed) * 1000; // Convert seconds to milliseconds
+			setIntervalTime(intervalTime);
 		}
-	}, [route, setInterpolatedRoute, setBearings]);
+	}, [
+		route,
+		resolutionMiles,
+		setInterpolatedRoute,
+		setBearings,
+		setIntervalTime,
+		speed,
+	]);
 
 	return (
 		interpolatedRoute.length > 0 && (
