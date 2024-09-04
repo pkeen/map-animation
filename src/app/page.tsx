@@ -8,6 +8,7 @@ import InterpolatedRoute from "./InterpolatedRoute";
 import TravelAnimation from "./TravelAnimation";
 import MovingIcon from "./MovingIcon";
 import MapLoadingHandler from "./MapLoadingHandler";
+import FlyToAnimations from "./FlyToAnimations";
 // import Van from "./Van";
 
 const App: React.FC = () => {
@@ -15,15 +16,21 @@ const App: React.FC = () => {
 		latitude: 35.11,
 		longitude: -97.57,
 		zoom: 3.5,
-		//35.110,-97.570
 	});
-
 	const [route, setRoute] = useState<any[]>([]);
 	const start = [-122.32579, 49.068343];
 	const end = [-121.221103, 48.692216];
+	const coordinates = [
+		// [-122.32835, 49.05157], // Start Abbostford
+		// [-122.47917, 48.74976], // Bellingham
+		// [-122.467194, 48.62942], // Chucknut
+		[-121.341291, 48.82816], // North Cascades
+		[-122.330284, 47.603245], // seattle
+	];
+
 	const [interpolatedRoute, setInterpolatedRoute] = useState<any[]>([]);
 	const [bearings, setBearings] = useState<number[]>([]);
-	const [steps, setSteps] = useState(500); // Lifted state for steps
+	// const [steps, setSteps] = useState(500); // Lifted state for steps
 	const [resolutionMiles, setResolutionMiles] = useState(0.5); // Lifted state for resolution in miles
 	const [iconIsMoving, setIconIsMoving] = useState(false);
 	const [speed, setSpeed] = useState(20); // Speed in miles per second
@@ -32,11 +39,19 @@ const App: React.FC = () => {
 		// "mapbox://styles/kingstonkeen/clzkjpe0q000301r5c5dhh10g"
 		// "mapbox://styles/mapbox/streets-v11"  // Default Mapbox Streets style
 		"mapbox://styles/kingstonkeen/clznaomph005r01r58luu8dkm" // sat streets USA
-        // "mapbox://styles/kingstonkeen/clzkqqstn001701pz06axg70z" // USA Road Trip
-        // "mapbox://styles/kingstonkeen/clzkqltj9001101r84zblg24x" // USA Road Trip w States
+		// "mapbox://styles/kingstonkeen/clzkqqstn001701pz06axg70z" // USA Road Trip
+		// "mapbox://styles/kingstonkeen/clzkqltj9001101r84zblg24x" // USA Road Trip w States
 	);
 	// const mapRef = useMap().current;
 	const [mapLoaded, setMapLoaded] = useState(false);
+	const [triggerFlyTo, setTriggerFlyTo] = useState(false);
+	const [flyToOptions, setFlyToOptions] = useState({
+		center: [-121.221103, 48], // Center it on your route
+		zoom: 7, // Adjust zoom level appropriately for the route
+		speed: 0.7, // Fly-to speed, lower is slower
+		curve: 1.42, // Animation curve
+		essential: true,
+	});
 
 	const replayHandler = () => {
 		setIconIsMoving(true);
@@ -73,8 +88,7 @@ const App: React.FC = () => {
 					<Route
 						route={route}
 						setRoute={setRoute}
-						start={start}
-						end={end}
+						coordinates={coordinates}
 					/>
 
 					<InterpolatedRoute
@@ -87,12 +101,19 @@ const App: React.FC = () => {
 						speed={speed}
 					/>
 					<TravelAnimation
-						start={start}
+						start={coordinates[0]}
 						interpolatedRoute={interpolatedRoute}
 						bearings={bearings}
 						iconIsMoving={iconIsMoving}
 						setIconIsMoving={setIconIsMoving}
 						intervalTime={intervalTime}
+					/>
+					<FlyToAnimations
+						flyToOptions={flyToOptions}
+						viewState={viewState}
+						setViewState={setViewState}
+						triggerFlyTo={triggerFlyTo}
+						setTriggerFlyTo={setTriggerFlyTo}
 					/>
 				</MapLoadingHandler>
 				{/* <Van
@@ -101,7 +122,8 @@ const App: React.FC = () => {
 				/> */}
 			</MapComponent>
 			<div>
-				<p className="text-gray-200">Zoom={viewState.zoom}</p>
+				<p className="text-gray-800">Zoom={viewState.zoom}</p>
+				<p>Lat: {viewState.latitude}</p>
 				<button
 					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 					onClick={() => setIconIsMoving(!iconIsMoving)}
@@ -117,6 +139,12 @@ const App: React.FC = () => {
 					onChange={(e) => setSpeed(parseFloat(e.target.value))}
 				/>
 				<p>{speed}</p>
+				<button
+					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					onClick={() => setTriggerFlyTo(true)}
+				>
+					Trigger FlyTo
+				</button>
 			</div>
 		</>
 	);

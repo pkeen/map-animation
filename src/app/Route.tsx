@@ -4,16 +4,21 @@ import { Source, Layer, useMap } from "react-map-gl";
 interface RouteProps {
 	route: number[][];
 	setRoute: (route: number[][]) => void;
-	start: number[];
-	end: number[];
+	// start: number[];
+	// end: number[];
+	coordinates: number[][]; // Added coordinates prop
 }
 
-const Route: React.FC<RouteProps> = ({ route, setRoute, start, end }) => {
+const Route: React.FC<RouteProps> = ({ route, setRoute, coordinates }) => {
 	useEffect(() => {
 		const getRoute = async () => {
+			const coordinatesString = coordinates
+				.map((coord) => coord.join(","))
+				.join(";");
+
 			try {
 				const query = await fetch(
-					`https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}`
+					`https://api.mapbox.com/directions/v5/mapbox/driving/${coordinatesString}?steps=true&geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}`
 				);
 				const json = await query.json();
 				const newRoute = json.routes[0].geometry.coordinates;
@@ -28,7 +33,7 @@ const Route: React.FC<RouteProps> = ({ route, setRoute, start, end }) => {
 		};
 
 		getRoute();
-	}, [start, end, setRoute]); // Removed `route` from dependencies to prevent infinite loop
+	}, [coordinates, setRoute]); // Removed `route` from dependencies to prevent infinite loop
 
 	// return (
 	// 	route.length > 0 && (
